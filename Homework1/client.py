@@ -9,13 +9,13 @@ numbers = ['', '', '']
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
 
-    packet = 'Hello, world'
+    packet = 'python.org'
     s.sendall(packet.encode('utf-8'))
     data = s.recv(1024).decode('utf-8')
     print('Received:', data)
 
-    packet = '1,2'
-    s.sendall(packet.encode('utf-8'))
+    # packet = '1,2'
+    # s.sendall(packet.encode('utf-8'))
 
     while True:
         data = s.recv(1024).decode('utf-8')
