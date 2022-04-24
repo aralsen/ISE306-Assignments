@@ -43,10 +43,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                         print("Sending {}".format(d[data]))
                         connection.sendall(d[data].encode('utf-8'))
                     else:
-                        connection.sendall(b'404')  # send 404
-
-                    # print('sending data back to the client')
-                    # connection.sendall(data)
+                        print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
+                        connection.sendall(sys.argv[2].encode('utf-8'))
                 else:
                     print('no more data from', client_address)
                     pass

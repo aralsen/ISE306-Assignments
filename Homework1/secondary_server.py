@@ -3,13 +3,13 @@ import sys
 
 # Create a TCP/IP socket
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-    if len(sys.argv) != 5:
-        print("Usage: $python primary_server.py <primary_port> <secondary_ip> <secondary_port> <addresses_file_name>")
+    if len(sys.argv) != 3:
+        print("Usage: $python secondary_server.py <port_number> <addresses_file_name>")
         sys.exit(1)
 
     # Read in file
     lines = []
-    with open(sys.argv[4], 'r') as f:
+    with open(sys.argv[2], 'r') as f:
         lines = f.readlines()
 
     # Split out and drop empty rows
@@ -20,7 +20,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         d[strip[0]] = strip[1]
 
     # Bind the socket to the port
-    server_address = ('127.0.0.1', int(sys.argv[1]))
+    server_address = ('127.0.0.2', int(sys.argv[1]))
     print('starting up on {} port {}'.format(*server_address))
     sock.bind(server_address)
 
