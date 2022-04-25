@@ -27,27 +27,32 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     # Listen for incoming connections
     sock.listen(1)
 
-    # Wait for a connection
-    print('waiting for a connection')
-    connection, client_address = sock.accept()
+    while True:
+        # Wait for a connection
+        print('waiting for a connection')
+        connection, client_address = sock.accept()
 
-    with connection:
-        print('connection from', client_address)
+        with connection:
+            print('connection from', client_address)
 
-        # Receive the data in small chunks and retransmit it
-        while True:
-            data = connection.recv(1024).decode('utf-8')
-            if data:
-                # print('received {!r}'.format(data))
-                data_split = data.split(' ')
-                if data_split[0] == 'GET':
-                    if data_split[1] in d.keys():
-                        # print("Sending {}".format(d[data_split[1]]))
-                        message = 'FOUND' + ' ' + data_split[1] + ' ' + d[data_split[1]]
-                        connection.sendall(message.encode('utf-8'))
-                    else:
-                        # print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
-                        message = 'REDIR' + ' ' + data_split[1] + ' ' + sys.argv[2] + ' ' + sys.argv[3]
-                        connection.sendall(message.encode('utf-8'))
-            else:
-                pass
+            # Receive the data in small chunks and retransmit it
+            while True:
+                data = connection.recv(1024).decode('utf-8')
+                if data:
+                    # print('received {!r}'.format(data))
+                    data_split = data.split(' ')
+                    if data_split[0] == 'GET':
+                        if data_split[1] in d.keys():
+                            # print("Sending {}".format(d[data_split[1]]))
+                            message = 'FOUND' + ' ' + data_split[1] + ' ' + d[data_split[1]]
+                            connection.sendall(message.encode('utf-8'))
+                        else:
+                            # print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
+                            message = 'REDIR' + ' ' + data_split[1] + ' ' + sys.argv[2] + ' ' + sys.argv[3]
+                            connection.sendall(message.encode('utf-8'))
+
+                else:
+                    pass
+
+                if not data:
+                    break
