@@ -37,17 +37,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(1024).decode('utf-8')
-            print('received {!r}'.format(data))
             if data:
+                # print('received {!r}'.format(data))
                 data_split = data.split(' ')
                 if data_split[0] == 'GET':
                     if data_split[1] in d.keys():
-                        print("Sending {}".format(d[data_split[1]]))
-                        connection.sendall(d[data_split[1]].encode('utf-8'))
+                        # print("Sending {}".format(d[data_split[1]]))
+                        message = 'FOUND' + ' ' + data_split[1] + ' ' + d[data_split[1]]
+                        connection.sendall(message.encode('utf-8'))
                     else:
-                        print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
-                        connection.sendall(sys.argv[2].encode('utf-8'))
+                        # print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
+                        message = 'REDIR' + ' ' + data_split[1] + ' ' + sys.argv[2] + ' ' + sys.argv[3]
+                        connection.sendall(message.encode('utf-8'))
             else:
-                print('no more data from', client_address)
-                connection.close()
                 pass

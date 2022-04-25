@@ -1,41 +1,38 @@
 import socket
 import sys
 
-numbers = ['', '', '']
-
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     if len(sys.argv) != 4:
         print("Usage: $python client.py <ip_address> <port_number> <host_name>")
         sys.exit(1)
 
+    # connect to primary_server
     s.connect((sys.argv[1], int(sys.argv[2])))
 
     packet = 'GET' + ' ' + sys.argv[3]
+    # ask for the IP address of the host
     s.sendall(packet.encode('utf-8'))
     data = s.recv(1024).decode('utf-8')
-    print('Received:', data)
-
-    # close the connection and terminate the program
-    s.close()
-    sys.exit(0)
-
-    # while True:
-    #     data = s.recv(1024).decode('utf-8')
-    #     status = data.split(' ')[0]
-    #     data = data[len(status)+1:]
-    #
-    #     if data and status == 'fibo':
-    #         print(data)
-    #         numbers[0:1] = data.split(',')
-    #         numbers[2] = int(numbers[0]) + int(numbers[1])
-    #         packet = str(numbers[1]) + ',' + str(numbers[2])
-    #         s.sendall(packet.encode('utf-8'))
-    #
-    #     if data and status == 'end':
-    #         print(data)
-    #         print('Connection is closed')
-    #         break
-    #
-    #     if not data:
-    #         pass
-
+    status = data.split(' ')[0]  # get the status code
+    if status == 'FOUND':
+        print('The IP address of the host {} is {}'.format(data.split(' ')[1], data.split(' ')[2]))
+        s.close()
+        sys.exit(0)
+    elif status == 'REDIR':
+        # close the current connection and connect to the secondary server
+        s.close()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect((data.split(' ')[2], int(data.split(' ')[3])))
+            s.sendall(packet.encode('utf-8'))
+            data = s.recv(1024).decode('utf-8')
+            status = data.split(' ')[0]
+            if status == 'FOUND':
+                print('The IP address of the host {} is {}'.format(data.split(' ')[1], data.split(' ')[2]))
+                # terminate the connection and program
+                s.close()
+                sys.exit(0)
+            elif status == 'ERROR':
+                print('The host {} does not exist'.format(data.split(' ')[1]))
+                # terminate the connection and program
+                s.close()
+                sys.exit(1)
