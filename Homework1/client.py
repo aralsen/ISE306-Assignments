@@ -35,7 +35,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 s.close()
                 sys.exit(0)
             elif status == 'ERROR':
-                print('The host {} does not exist'.format(data.split(' ')[1]))
+                print('The IP address of the host {} could not be found, sorry!'.format(data.split(' ')[1]))
                 # terminate the connection and program
                 s.close()
                 sys.exit(1)
