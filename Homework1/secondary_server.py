@@ -21,7 +21,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
 
     # Bind the socket to the port
     port_number = int(sys.argv[1])
-    server_address = ('127.0.0.2', port_number)
+    server_address = ('127.0.0.1', port_number)
     print('starting up on {} port {}'.format(*server_address))
     sock.bind(server_address)
 
