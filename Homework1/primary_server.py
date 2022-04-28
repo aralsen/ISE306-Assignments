@@ -15,6 +15,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     # Split out and drop empty rows
     strip_list = [line.replace('\n', '').split(' ') for line in lines if line != '\n']
 
+    # Create a dictionary of host_names and their IPs
     host_and_ip = dict()
     for strip in strip_list:
         host_and_ip[strip[0]] = strip[1]
