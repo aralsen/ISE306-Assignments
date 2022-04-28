@@ -15,12 +15,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
     # Split out and drop empty rows
     strip_list = [line.replace('\n', '').split(' ') for line in lines if line != '\n']
 
-    d = dict()
+    host_and_ip = dict()
     for strip in strip_list:
-        d[strip[0]] = strip[1]
+        host_and_ip[strip[0]] = strip[1]
 
     # Bind the socket to the port
-    server_address = ('127.0.0.2', int(sys.argv[1]))
+    port_number = int(sys.argv[1])
+    server_address = ('127.0.0.2', port_number)
     print('starting up on {} port {}'.format(*server_address))
     sock.bind(server_address)
 
@@ -41,13 +42,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                 if data:
                     data_split = data.split(' ')
                     if data_split[0] == 'GET':
-                        if data_split[1] in d.keys():
+                        HOST_NAME = data_split[1]
+                        if HOST_NAME in host_and_ip.keys():
                             # print("Sending {}".format(d[data_split[1]]))
-                            message = 'FOUND' + ' ' + data_split[1] + ' ' + d[data_split[1]]
+                            IP_ADDRESS = host_and_ip[HOST_NAME]
+                            message = 'FOUND' + ' ' + HOST_NAME + ' ' + IP_ADDRESS
                             connection.sendall(message.encode('utf-8'))
                         else:
                             # print("Sending secondary dns server ip {} {} {}".format(data, sys.argv[2], sys.argv[3]))
-                            message = 'ERROR' + ' ' + data_split[1]
+                            message = 'ERROR' + ' ' + HOST_NAME
                             connection.sendall(message.encode('utf-8'))
                 else:
                     pass

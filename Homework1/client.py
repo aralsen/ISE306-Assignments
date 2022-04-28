@@ -7,9 +7,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         sys.exit(1)
 
     # connect to primary_server
-    s.connect((sys.argv[1], int(sys.argv[2])))
+    ip_address = sys.argv[1]
+    port_number = int(sys.argv[2])
+    s.connect((ip_address, port_number))
 
-    packet = 'GET' + ' ' + sys.argv[3]
+    HOST_NAME = sys.argv[3]
+    packet = 'GET' + ' ' + HOST_NAME
     # ask for the IP address of the host
     s.sendall(packet.encode('utf-8'))
     data = s.recv(1024).decode('utf-8')
